@@ -40,14 +40,23 @@ func (rb *RingBuffer) Tail() float64 {
 
 //Head returns the element at the buffer tail
 func (rb *RingBuffer) Head() float64 {
-	return rb.buff[rb.tail]
+	return rb.buff[rb.head]
 }
 
-//Last returns the element at the head - 1
-func (rb *RingBuffer) Last() float64 {
+//MostRecent returns the element at the head - 1
+func (rb *RingBuffer) MostRecent() float64 {
 	if rb.head == 0 {
 		return rb.buff[rb.size-1]
 	}
 	return rb.buff[rb.head-1]
+
+}
+
+//Oldest returns the element at the head - 1
+func (rb *RingBuffer) Oldest() float64 {
+	if rb.tail == 0 {
+		return rb.buff[rb.size-1]
+	}
+	return rb.buff[rb.tail-1]
 
 }
