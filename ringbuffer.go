@@ -8,6 +8,8 @@ type RingBuffer struct {
 	low           int
 	size          int
 	recordHighLow bool
+	init          bool
+	counter       int
 }
 
 func NewBuffer(size int, recordHighLow bool) *RingBuffer {
@@ -15,25 +17,58 @@ func NewBuffer(size int, recordHighLow bool) *RingBuffer {
 	rb := &RingBuffer{}
 	rb.recordHighLow = recordHighLow
 	rb.size = size
-	rb.buff = make([]float64, rb.size+1)
-	rb.head = 0
-	rb.tail = 1
+	rb.buff = make([]float64, rb.size)
+
+	rb.head = -1
+	rb.tail = rb.head + 1
 	rb.high = 0
 	rb.low = 0
+	rb.counter = 0
 	return rb
 }
 
 //Push adds a new element to the buffer
 func (rb *RingBuffer) Push(value float64) {
+
+	highAtTail := false
+	lowAtTail := false
+
+	//if (rb.high == rb.tail) || (rb.high == rb.head) {
+	if rb.high == rb.tail {
+		highAtTail = true
+	}
+
+	//if (rb.low == rb.tail) || (rb.low == rb.head) {
+	if rb.low == rb.tail {
+		lowAtTail = true
+	}
+
+	// -----------------------
+	// Increase ring pointers
+	// -----------------------
+	rb.head++
+	rb.tail++
+
+	if rb.tail%(rb.size) == 0 {
+		rb.tail = 0
+	}
+
+	if rb.head%(rb.size) == 0 {
+		rb.head = 0
+	}
+
+	// ----------------------
+	// Put new value in head
+	// ----------------------
 	rb.buff[rb.head] = value
 
 	if rb.recordHighLow == true {
 		// --------------------
 		// rb.high end of life,
 		// --------------------
-		if rb.high == rb.tail {
-			rb.buff[rb.tail] = 0
+		if highAtTail {
 			hVal := float64(0)
+
 			for i, val := range rb.buff {
 				if val > hVal {
 					hVal = val
@@ -46,9 +81,9 @@ func (rb *RingBuffer) Push(value float64) {
 		// --------------------
 		// rb.low end of life
 		// --------------------
-		if rb.low == rb.tail {
+		if lowAtTail {
 			lVal := float64(0Xffffffff)
-			rb.buff[rb.tail] = lVal
+			//rb.buff[rb.tail] = lVal
 			for i, val := range rb.buff {
 				if val < lVal {
 					lVal = val
@@ -66,18 +101,11 @@ func (rb *RingBuffer) Push(value float64) {
 			rb.low = rb.head
 		}
 	}
-	rb.head++
-	rb.tail++
-	//rb.high++
-	//rb.low++
 
-	if rb.tail%(rb.size+1) == 0 {
-		rb.tail = 0
+	if !rb.init {
+		rb.init = true
 	}
-
-	if rb.head%(rb.size+1) == 0 {
-		rb.head = 0
-	}
+	rb.counter++
 
 }
 

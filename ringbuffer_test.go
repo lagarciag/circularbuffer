@@ -88,11 +88,11 @@ func TestDownTrend(t *testing.T) {
 	rb.Push(1)
 
 	if rb.High() != 400 {
-		t.Error("mistmatch, high is 60")
+		t.Error("mistmatch, high shouldbe 400", rb.High())
 	}
 
 	if rb.Low() != 1 {
-		t.Error("mistmatch, Low is 1")
+		t.Error("mistmatch, Low is 1", rb.Low())
 	}
 
 	t.Log("HIGH:", rb.High())
@@ -105,7 +105,17 @@ func TestUpTrend(t *testing.T) {
 	rb := ringbuffer.NewBuffer(10, true)
 
 	rb.Push(1)
+
+	if rb.High() != 1 {
+		t.Error("mistmatch, high is 1")
+	}
+
 	rb.Push(5)
+
+	if rb.High() != 5 {
+		t.Error("mistmatch, high is 5", rb.High())
+	}
+
 	rb.Push(4)
 	rb.Push(100)
 	rb.Push(999)
@@ -118,11 +128,11 @@ func TestUpTrend(t *testing.T) {
 	rb.Push(100000)
 
 	if rb.High() != 100000 {
-		t.Error("mistmatch, high is 60")
+		t.Error("mistmatch, high should be 10000", rb.High())
 	}
 
 	if rb.Low() != 4 {
-		t.Error("mistmatch, Low is 1")
+		t.Error("mistmatch, Low should be 4", rb.Low())
 	}
 
 	t.Log("HIGH:", rb.High())
