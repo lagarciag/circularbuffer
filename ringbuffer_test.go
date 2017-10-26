@@ -75,6 +75,9 @@ func TestDownTrend(t *testing.T) {
 	rb := ringbuffer.NewBuffer(10, true)
 
 	rb.Push(1000)
+
+	t.Log("Low:", rb.Low())
+
 	rb.Push(500)
 	rb.Push(400)
 	rb.Push(100)
@@ -85,9 +88,61 @@ func TestDownTrend(t *testing.T) {
 	rb.Push(60)
 	rb.Push(60)
 	rb.Push(2)
+
+	t.Log("Low:", rb.Low())
+
 	rb.Push(1)
 
 	if rb.High() != 400 {
+		t.Error("mistmatch, high shouldbe 400", rb.High())
+	}
+
+	if rb.Low() != 1 {
+		t.Error("mistmatch, Low is 1", rb.Low())
+	}
+
+	t.Log("HIGH:", rb.High())
+	t.Log("Low:", rb.Low())
+
+}
+
+func TestDownTrend2(t *testing.T) {
+
+	rb := ringbuffer.NewBuffer(10, true)
+
+	rb.Push(1000)
+
+	t.Log("Low:", rb.Low())
+
+	rb.Push(500)
+	rb.Push(400)
+	rb.Push(100)
+	rb.Push(1)
+	rb.Push(6)
+	rb.Push(60)
+	rb.Push(60)
+	rb.Push(60)
+	rb.Push(60)
+	rb.Push(23)
+	rb.Push(11)
+	rb.Push(24)
+	rb.Push(2200)
+	rb.Push(223)
+	t.Log("Low2:", rb.Low())
+
+	rb.Push(23)
+	rb.Push(55)
+	rb.Push(2)
+	rb.Push(2)
+	rb.Push(2)
+	rb.Push(2)
+	rb.Push(2)
+
+	t.Log("Low:", rb.Low())
+
+	rb.Push(1)
+
+	if rb.High() != 2200 {
 		t.Error("mistmatch, high shouldbe 400", rb.High())
 	}
 
